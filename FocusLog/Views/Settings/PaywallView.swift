@@ -22,9 +22,8 @@ struct PaywallView: View {
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
+                // Proの内容は調整中。決まったらここに並べる。
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("カテゴリを無制限に作成（無料版は\(Limits.freeCategories)個まで）", systemImage: "folder")
-                    Label("タスクを無制限に作成（無料版は\(Limits.freeTasks)個まで）", systemImage: "timer")
                     Label("一度の購入でずっと使えます", systemImage: "checkmark.seal")
                 }
                 .padding()

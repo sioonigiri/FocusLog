@@ -64,7 +64,8 @@ final class AggregationTests: XCTestCase {
         XCTAssertEqual(DurationFormat.text(seconds: 60 * 60), "1時間")
         XCTAssertEqual(DurationFormat.text(seconds: 95 * 60), "1時間35分")
         XCTAssertEqual(DurationFormat.clock(59.2), "01:00")
-        XCTAssertEqual(DurationFormat.clock(3600), "1:00:00")
+        XCTAssertEqual(DurationFormat.clock(3600), "60:00")
+        XCTAssertEqual(DurationFormat.clock(3599.5), "60:00")
     }
 
     func testMonthIsAlwaysGregorian() {
@@ -86,11 +87,9 @@ final class AggregationTests: XCTestCase {
         XCTAssertEqual(task.durationMinutes, 60)
     }
 
-    func testFreeLimitsAreOffWhilePlanned() {
-        XCTAssertFalse(Limits.isEnforced)
-        let pro = ProStore()
-        XCTAssertTrue(pro.canCreateTask(currentCount: 100))
-        XCTAssertTrue(pro.canCreateCategory(currentCount: 100))
+    func testLimits() {
+        XCTAssertEqual(Limits.categories, 10)
+        XCTAssertEqual(Limits.tasks, 50)
     }
 }
 
@@ -106,11 +105,13 @@ final class TimerStoreTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "activeTimer")
         UserDefaults.standard.set(false, forKey: AppSettings.soundKey) // テスト中は音を鳴らさない
         UserDefaults.standard.set(true, forKey: AppSettings.vibrationKey)
+        Feedback.notificationsAllowed = { true }
         store = TimerStore()
     }
 
     override func tearDown() async throws {
         Feedback.stopAlarm()
+        Feedback.notificationsAllowed = NotificationManager.isAllowed
         store.active = nil
         UserDefaults.standard.removeObject(forKey: AppSettings.soundKey)
         UserDefaults.standard.removeObject(forKey: AppSettings.vibrationKey)
@@ -118,7 +119,14 @@ final class TimerStoreTests: XCTestCase {
 
     private var sessions: [Session] { (try? context.fetch(FetchDescriptor<Session>())) ?? [] }
 
-    func testFinishRecordsPlannedTimeAndStartsAlarm() {
+    /// 鳴らし始めは通知の許可を確かめてからなので、少し待つ。
+    private func waitForRinging(_ expected: Bool) async {
+        for _ in 0..<20 where Feedback.isRinging != expected {
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+    }
+
+    func testFinishRecordsPlannedTimeAndStartsAlarm() async {
         let task = TaskTemplate(name: "単語", durationMinutes: 1, sortOrder: 0, category: nil)
         context.insert(task)
         store.start(TimerConfig(task: task))
@@ -129,6 +137,7 @@ final class TimerStoreTests: XCTestCase {
         XCTAssertEqual(sessions.count, 1)
         XCTAssertEqual(sessions.first?.durationSeconds, 60)
         XCTAssertEqual(sessions.first?.task?.id, task.id)
+        await waitForRinging(true)
         XCTAssertTrue(Feedback.isRinging)
 
         store.dismissCompleted()
@@ -136,11 +145,29 @@ final class TimerStoreTests: XCTestCase {
         XCTAssertNil(store.completed)
     }
 
-    func testFinishedInBackgroundDoesNotRing() {
+    func testFinishedInBackgroundDoesNotRing() async {
         store.start(.initial)
         store.finishIfDue(in: context, now: store.active!.endDate!.addingTimeInterval(30))
         XCTAssertNotNil(store.completed)
         XCTAssertEqual(sessions.count, 1)
+        await waitForRinging(true)
+        XCTAssertFalse(Feedback.isRinging)
+    }
+
+    func testNotificationsOffMeansNoSoundOrVibration() async {
+        Feedback.notificationsAllowed = { false }
+        store.start(.initial)
+        store.finishIfDue(in: context, now: store.active!.endDate!)
+        XCTAssertNotNil(store.completed, "完了画面と記録はいつも通り")
+        XCTAssertEqual(sessions.count, 1)
+        await waitForRinging(true)
+        XCTAssertFalse(Feedback.isRinging)
+    }
+
+    func testStoppedBeforeStartingNeverRings() async {
+        Feedback.startAlarm()
+        Feedback.stopAlarm()
+        await waitForRinging(true)
         XCTAssertFalse(Feedback.isRinging)
     }
 
@@ -188,10 +215,14 @@ final class TimerStoreTests: XCTestCase {
         XCTAssertEqual(restored.active, store.active)
     }
 
-    func testAlarmStopsByItselfAfterOneMinute() async throws {
+    func testAlarmStopsByItselfAfterTenSeconds() async throws {
+        XCTAssertEqual(Feedback.maxDuration, 10)
         Feedback.startAlarm()
+        await waitForRinging(true)
         XCTAssertTrue(Feedback.isRinging)
-        try await Task.sleep(for: .seconds(Feedback.maxDuration + 3))
+        try await Task.sleep(for: .seconds(Feedback.maxDuration - 3))
+        XCTAssertTrue(Feedback.isRinging, "10秒まではまだ鳴っている")
+        try await Task.sleep(for: .seconds(6))
         XCTAssertFalse(Feedback.isRinging)
     }
 }

@@ -68,17 +68,30 @@ enum Feedback {
     /// 鳴らす間隔（秒）。一番長い音（約2秒）が重ならない長さにしている。
     private static let interval: TimeInterval = 2.5
     /// 止め忘れても鳴り続けないように、この時間で自動的に止める（秒）。
-    static let maxDuration: TimeInterval = 60
+    static let maxDuration: TimeInterval = 10
 
     private static var repeater: Timer?
+    /// 止めるたびに増やす。通知の許可を確認している間に止められたら、鳴らし始めない。
+    private static var generation = 0
+    /// 通知が許可されているか。テストで差し替えられるようにしている。
+    static var notificationsAllowed: () async -> Bool = NotificationManager.isAllowed
 
     /// アラームが鳴り続けている間はtrue。
     static var isRinging: Bool { repeater != nil }
 
     /// アプリを開いている間にタイマーが終わったときに鳴らし始める。
+    /// 通知をオフにしている場合は、音もバイブも鳴らさない。
     static func startAlarm() {
         stopAlarm()
         guard AppSettings.soundEnabled || AppSettings.vibrationEnabled else { return }
+        let current = generation
+        Task {
+            guard await notificationsAllowed(), current == generation else { return }
+            beginRinging()
+        }
+    }
+
+    private static func beginRinging() {
         let startedAt = Date()
         ring()
         repeater = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
@@ -93,6 +106,7 @@ enum Feedback {
     }
 
     static func stopAlarm() {
+        generation += 1
         repeater?.invalidate()
         repeater = nil
     }

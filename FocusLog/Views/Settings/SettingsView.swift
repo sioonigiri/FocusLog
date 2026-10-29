@@ -13,12 +13,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("FocusLog") {
-                    // Proの内容と価格は調整中。決まるまでは押せないようにしておく。
-                    LabeledContent("Proにアップグレード") {
-                        Text("調整中")
-                    }
-                }
                 Section {
                     Toggle("サウンド", isOn: $soundEnabled)
                     if soundEnabled {
@@ -31,7 +25,7 @@ struct SettingsView: View {
                 } header: {
                     Text("タイマー終了時")
                 } footer: {
-                    Text("マナーモード中は音が鳴らず、バイブレーションのみになります。")
+                    Text("マナーモード中は音が鳴らず、バイブレーションのみになります。通知をオフにしている場合は、音もバイブレーションも鳴りません。")
                 }
                 Section("このアプリについて") {
                     LabeledContent("バージョン", value: version)

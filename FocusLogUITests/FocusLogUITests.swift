@@ -68,9 +68,8 @@ final class FocusLogUITests: XCTestCase {
         XCTAssertTrue(wheel.waitForExistence(timeout: 2))
         wheel.adjust(toPickerWheelValue: "60分")
         app.buttons["決定"].tap()
-        // 60分は「1:00:00」と時間つきで表示される
-        XCTAssertTrue(app.buttons["1:00:00"].waitForExistence(timeout: 2))
-        app.buttons["1:00:00"].tap()
+        XCTAssertTrue(app.buttons["60:00"].waitForExistence(timeout: 2))
+        app.buttons["60:00"].tap()
         wheel.adjust(toPickerWheelValue: "1分")
         app.buttons["決定"].tap()
         XCTAssertTrue(app.buttons["01:00"].waitForExistence(timeout: 2))
@@ -268,16 +267,42 @@ final class FocusLogUITests: XCTestCase {
         XCTAssertTrue(app.buttons["45:00"].waitForExistence(timeout: 2))
     }
 
+    // MARK: 作成の上限
+
+    func testTaskLimit() {
+        app.terminate()
+        app.launchArguments = ["-UITesting", "-UITestingFill", "tasks"]
+        app.launch()
+        openDrawer()
+        app.buttons["タスクを作成"].tap()
+        XCTAssertTrue(app.alerts["タスクは50個まで作成できます"].waitForExistence(timeout: 2))
+        app.alerts.buttons["OK"].tap()
+        XCTAssertFalse(app.navigationBars["タスクを追加"].exists)
+    }
+
+    func testCategoryLimit() {
+        app.terminate()
+        app.launchArguments = ["-UITesting", "-UITestingFill", "categories"]
+        app.launch()
+        openDrawer()
+        app.buttons["タスクを作成"].tap()
+        XCTAssertTrue(app.navigationBars["タスクを追加"].waitForExistence(timeout: 2))
+        app.buttons["新しいカテゴリを作成"].tap()
+        XCTAssertTrue(app.alerts["カテゴリは10個まで作成できます"].waitForExistence(timeout: 2))
+        app.alerts.buttons["OK"].tap()
+        XCTAssertFalse(app.navigationBars["カテゴリを追加"].exists)
+    }
+
     // MARK: 設定
 
     func testSettings() {
         openDrawer()
         app.buttons["設定"].tap()
         XCTAssertTrue(app.navigationBars["設定"].waitForExistence(timeout: 2))
-        XCTAssertTrue(app.staticTexts["Proにアップグレード、調整中"].exists)
-        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Pro")).firstMatch.exists, "Proは押せない")
+        XCTAssertFalse(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Pro")).firstMatch.exists, "Proは隠している")
+        XCTAssertFalse(app.buttons.containing(NSPredicate(format: "label CONTAINS %@", "Pro")).firstMatch.exists)
         XCTAssertFalse(app.staticTexts["カテゴリ"].exists, "管理セクションはない")
-        XCTAssertTrue(app.staticTexts["マナーモード中は音が鳴らず、バイブレーションのみになります。"].exists)
+        XCTAssertTrue(app.staticTexts["マナーモード中は音が鳴らず、バイブレーションのみになります。通知をオフにしている場合は、音もバイブレーションも鳴りません。"].exists)
 
         let picker = button(containing: "アラーム音")
         XCTAssertTrue(picker.exists)

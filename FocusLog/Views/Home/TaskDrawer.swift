@@ -7,14 +7,13 @@ struct TaskDrawer: View {
     let onOpenSettings: () -> Void
 
     @Environment(\.modelContext) private var context
-    @Environment(ProStore.self) private var pro
     @Query(filter: #Predicate<Category> { $0.isArchived == false }, sort: \Category.sortOrder)
     private var categories: [Category]
     @Query(sort: \TaskTemplate.sortOrder) private var tasks: [TaskTemplate]
     @AppStorage("collapsedCategoryIDs") private var collapsedRaw = ""
 
     @State private var editor: TaskEditorTarget?
-    @State private var showingPaywall = false
+    @State private var showingLimit = false
     @State private var taskToDelete: TaskTemplate?
     @State private var categoryToDelete: Category?
     /// 編集中はタスクをタップすると編集画面が開く。
@@ -63,8 +62,10 @@ struct TaskDrawer: View {
             case .edit(let task): TaskEditView(task: task)
             }
         }
-        .sheet(isPresented: $showingPaywall) {
-            PaywallView(reason: "無料版で作成できるタスクは\(Limits.freeTasks)個までです")
+        .alert("タスクは\(Limits.tasks)個まで作成できます", isPresented: $showingLimit) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("使わないタスクを削除してから作成してください。")
         }
         .confirmationDialog("「\(taskToDelete?.name ?? "")」を削除しますか？",
                             isPresented: Binding(get: { taskToDelete != nil }, set: { if !$0 { taskToDelete = nil } }),
@@ -135,10 +136,10 @@ struct TaskDrawer: View {
     }
 
     private func addTask() {
-        if pro.canCreateTask(currentCount: tasks.count) {
+        if tasks.count < Limits.tasks {
             editor = .new
         } else {
-            showingPaywall = true
+            showingLimit = true
         }
     }
 }

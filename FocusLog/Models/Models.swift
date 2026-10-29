@@ -74,11 +74,10 @@ final class Session {
     }
 }
 
+/// 作成できる数の上限。全ユーザー共通（Proは調整中のため、今は区別しない）。
 enum Limits {
-    static let freeCategories = 3
-    static let freeTasks = 6
-    /// 無料版の作成上限を効かせるか。Proの内容と価格が調整中のあいだは外しておく。
-    static let isEnforced = false
+    static let categories = 10
+    static let tasks = 50
     /// タイマー時間の範囲（分）。
     static let timerMinutes = 1...60
 }

@@ -19,6 +19,11 @@ enum NotificationManager {
         center.add(UNNotificationRequest(identifier: timerID, content: content, trigger: trigger))
     }
 
+    /// 通知が許可されているか。設定でオフにされている（拒否）ときだけfalse。
+    static func isAllowed() async -> Bool {
+        await center.notificationSettings().authorizationStatus != .denied
+    }
+
     static func cancelTimer() {
         center.removePendingNotificationRequests(withIdentifiers: [timerID])
     }

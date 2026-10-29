@@ -3,6 +3,7 @@ import Observation
 import StoreKit
 
 /// 買い切りの「FocusLog Pro」の購入状態を管理する。
+/// Proは内容と価格を調整中のため、今は画面に出していない。
 @MainActor
 @Observable
 final class ProStore {
@@ -28,14 +29,6 @@ final class ProStore {
             await refreshEntitlements()
             await loadProduct()
         }
-    }
-
-    func canCreateCategory(currentCount: Int) -> Bool {
-        !Limits.isEnforced || isPro || currentCount < Limits.freeCategories
-    }
-
-    func canCreateTask(currentCount: Int) -> Bool {
-        !Limits.isEnforced || isPro || currentCount < Limits.freeTasks
     }
 
     func loadProduct() async {

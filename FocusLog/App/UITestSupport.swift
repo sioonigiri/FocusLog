@@ -49,6 +49,18 @@ enum UITestSupport {
         add(words, on: today, minutes: 25, hour: 0)
         add(calc, on: today, minutes: 10, hour: 0)
         add(words, on: yesterday, minutes: 25, hour: 9)
+
+        // 上限のテスト用に、カテゴリかタスクを上限まで増やす。
+        let fill = UserDefaults.standard.string(forKey: "UITestingFill")
+        if fill == "categories" {
+            for i in 2..<Limits.categories {
+                context.insert(Category(name: "カテゴリ\(i + 1)", color: .gray, sortOrder: i))
+            }
+        } else if fill == "tasks" {
+            for i in 3..<Limits.tasks {
+                context.insert(TaskTemplate(name: "タスク\(i + 1)", durationMinutes: 10, sortOrder: i, category: math))
+            }
+        }
         try? context.save()
     }
 }

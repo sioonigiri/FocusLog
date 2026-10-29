@@ -58,11 +58,10 @@ enum DurationFormat {
         return m == 0 ? "\(h)時間" : "\(h)時間\(m)分"
     }
 
-    /// タイマー表示用の「29:58」形式。
+    /// タイマー表示用の「29:58」形式。タイマーは60分までなので、60分も「60:00」と分で表す。
     static func clock(_ remaining: TimeInterval) -> String {
         let total = Int(remaining.rounded(.up))
-        let h = total / 3600, m = (total % 3600) / 60, s = total % 60
-        return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%02d:%02d", m, s)
+        return String(format: "%02d:%02d", total / 60, total % 60)
     }
 }
 

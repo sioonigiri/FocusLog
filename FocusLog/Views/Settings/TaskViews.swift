@@ -18,7 +18,6 @@ struct TaskEditView: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    @Environment(ProStore.self) private var pro
     @Query(filter: #Predicate<Category> { $0.isArchived == false }, sort: \Category.sortOrder)
     private var categories: [Category]
     @Query(sort: \TaskTemplate.sortOrder) private var tasks: [TaskTemplate]
@@ -29,7 +28,7 @@ struct TaskEditView: View {
     @State private var creatingCategory = false
     /// 作成したカテゴリ。シートが閉じてから選択する（閉じる前に選ぶと、この画面ごと閉じてしまうため）。
     @State private var createdCategoryID: UUID?
-    @State private var showingPaywall = false
+    @State private var showingLimit = false
 
     private let presets = [15, 25, 30, 45, 60]
 
@@ -67,10 +66,10 @@ struct TaskEditView: View {
                         .accessibilityAddTraits(category.id == categoryID ? .isSelected : [])
                     }
                     Button("新しいカテゴリを作成", systemImage: "plus") {
-                        if pro.canCreateCategory(currentCount: categories.count) {
+                        if categories.count < Limits.categories {
                             creatingCategory = true
                         } else {
-                            showingPaywall = true
+                            showingLimit = true
                         }
                     }
                 }
@@ -108,8 +107,10 @@ struct TaskEditView: View {
             }) {
                 CategoryEditView(category: nil) { createdCategoryID = $0.id }
             }
-            .sheet(isPresented: $showingPaywall) {
-                PaywallView(reason: "無料版で作成できるカテゴリは\(Limits.freeCategories)個までです")
+            .alert("カテゴリは\(Limits.categories)個まで作成できます", isPresented: $showingLimit) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("使わないカテゴリを削除してから作成してください。")
             }
             .onAppear(perform: selectDefaultCategory)
             .onChange(of: categories.count) { selectDefaultCategory() }
