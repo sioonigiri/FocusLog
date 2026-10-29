@@ -45,7 +45,6 @@ struct ContentView: View {
             SettingsView()
         }
         .task {
-            Seeder.seedIfNeeded(context)
             Seeder.clampTaskDurations(context)
             timer.finishIfDue(in: context)
         }

@@ -21,7 +21,6 @@ enum UITestSupport {
         ["activeTimer", TimerStore.selectedTaskKey, TimerStore.minutesOverrideKey,
          "collapsedCategoryIDs", AppSettings.soundKey, AppSettings.vibrationKey, AppSettings.alarmSoundKey]
             .forEach(defaults.removeObject(forKey:))
-        defaults.set(true, forKey: "didSeedSampleData")
     }
 
     /// 英語（単語25分・リスニング30分）と数学（計算1分）。
