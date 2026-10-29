@@ -67,6 +67,8 @@ enum DurationFormat {
 
 enum DayFormat {
     static let weekdays = ["日", "月", "火", "水", "木", "金", "土"]
+    /// カレンダーの曜日の並び。月曜始まり。
+    static let calendarWeekdays = ["月", "火", "水", "木", "金", "土", "日"]
 
     /// 「10月28日（水）」形式。
     static func title(_ date: Date, calendar: Calendar = .current) -> String {

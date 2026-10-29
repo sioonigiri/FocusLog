@@ -176,6 +176,12 @@ final class FocusLogUITests: XCTestCase {
         let prev = Calendar(identifier: .gregorian).date(byAdding: .month, value: -1, to: .now)!
         let c = Calendar(identifier: .gregorian).dateComponents([.year, .month], from: prev)
         XCTAssertTrue(app.staticTexts["\(c.year!)年\(c.month!)月"].waitForExistence(timeout: 2))
+
+        // 月曜始まり。1日は、その曜日の列に並ぶ。
+        XCTAssertLessThan(app.staticTexts["月"].frame.minX, app.staticTexts["日"].frame.minX)
+        let first = Calendar(identifier: .gregorian).date(from: c)!
+        let weekday = ["日", "月", "火", "水", "木", "金", "土"][Calendar(identifier: .gregorian).component(.weekday, from: first) - 1]
+        XCTAssertEqual(app.buttons["1"].frame.midX, app.staticTexts[weekday].frame.midX, accuracy: 2)
         app.buttons["1"].tap()
         let empty = app.staticTexts["記録がありません"]
         // 前月1日が昨日のことはないので、空のはず

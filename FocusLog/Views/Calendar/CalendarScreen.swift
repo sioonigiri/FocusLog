@@ -19,9 +19,10 @@ struct CalendarScreen: View {
         Dictionary(grouping: monthSessions) { calendar.startOfDay(for: $0.startedAt) }
     }
 
-    /// 月初の曜日に合わせて先頭を空白(nil)で埋めた日付の並び。
+    /// 月初の曜日に合わせて先頭を空白(nil)で埋めた日付の並び。月曜始まり。
     private var days: [Date?] {
-        let leading = calendar.component(.weekday, from: month) - 1
+        // weekday は日曜=1〜土曜=7。月曜を0列目にする。
+        let leading = (calendar.component(.weekday, from: month) + 5) % 7
         let count = calendar.range(of: .day, in: .month, for: month)!.count
         let dates = (0..<count).map { calendar.date(byAdding: .day, value: $0, to: month)! }
         return Array(repeating: nil, count: leading) + dates
@@ -33,7 +34,7 @@ struct CalendarScreen: View {
                 monthHeader
                 VStack(spacing: 4) {
                     LazyVGrid(columns: columns) {
-                        ForEach(DayFormat.weekdays, id: \.self) { weekday in
+                        ForEach(DayFormat.calendarWeekdays, id: \.self) { weekday in
                             Text(weekday)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
