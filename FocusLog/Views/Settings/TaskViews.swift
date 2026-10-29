@@ -63,6 +63,8 @@ struct TaskEditView: View {
                             }
                             .contentShape(Rectangle())
                         }
+                        // ボタンの色（アクセントカラー）が名前に付かないようにする。
+                        .buttonStyle(.plain)
                         .accessibilityAddTraits(category.id == categoryID ? .isSelected : [])
                     }
                     Button("新しいカテゴリを作成", systemImage: "plus") {

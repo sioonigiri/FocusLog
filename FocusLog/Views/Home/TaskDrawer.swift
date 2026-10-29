@@ -225,17 +225,19 @@ private struct CategoryCard: View {
                         .buttonStyle(.borderless)
                         .transition(.scale.combined(with: .opacity))
                 }
+                // 小さい画面でも名前を優先して表示する（時間と右端のマークは縮めない）。
                 Text(task.name)
                     .lineLimit(1)
+                    .layoutPriority(1)
                 Spacer(minLength: 8)
                 Text("\(task.durationMinutes)分")
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
+                    .fixedSize()
                 if isEditing {
                     Image(systemName: "chevron.right")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(.tertiary)
-                        .frame(width: 28)
                 } else {
                     Image(systemName: "play.circle.fill")
                         .font(.title2)
