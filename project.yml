@@ -1,0 +1,69 @@
+name: FocusLog
+options:
+  bundleIdPrefix: com.example
+  developmentLanguage: ja
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+fileGroups:
+  - Products.storekit
+targets:
+  FocusLog:
+    type: application
+    platform: iOS
+    sources:
+      - path: FocusLog
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusLog
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: FocusLog
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  FocusLogTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: FocusLogTests
+    dependencies:
+      - target: FocusLog
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusLogTests
+  FocusLogUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: FocusLogUITests
+    dependencies:
+      - target: FocusLog
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusLogUITests
+        TEST_TARGET_NAME: FocusLog
+schemes:
+  FocusLog:
+    build:
+      targets:
+        FocusLog: all
+    test:
+      config: Debug
+      targets:
+        - FocusLogTests
+        - FocusLogUITests
+      commandLineArguments:
+        "-UITesting": true
+    run:
+      config: Debug
+      storeKitConfiguration: Products.storekit
