@@ -30,13 +30,13 @@ struct TaskEditView: View {
     @State private var createdCategoryID: UUID?
     @State private var showingLimit = false
 
-    private let presets = [15, 25, 30, 45, 60]
+    private let presets = [10, 15, 20, 30, 60]
 
     init(task: TaskTemplate?) {
         self.task = task
         _name = State(initialValue: task?.name ?? "")
         _categoryID = State(initialValue: task?.category?.id)
-        _minutes = State(initialValue: min(task?.durationMinutes ?? 25, Limits.timerMinutes.upperBound))
+        _minutes = State(initialValue: min(task?.durationMinutes ?? 10, Limits.timerMinutes.upperBound))
     }
 
     var body: some View {

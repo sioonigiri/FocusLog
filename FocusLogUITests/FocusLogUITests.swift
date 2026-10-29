@@ -259,12 +259,12 @@ final class FocusLogUITests: XCTestCase {
         // 作ったカテゴリが選ばれた状態で戻る
         XCTAssertTrue(app.navigationBars["タスクを追加"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS %@ AND selected == true", "物理")).firstMatch.exists)
-        app.buttons["45"].tap()
+        app.buttons["20"].tap()
         app.navigationBars["タスクを追加"].buttons["保存"].tap()
 
         XCTAssertTrue(app.staticTexts["物理"].waitForExistence(timeout: 2))
         task("過去問").tap()
-        XCTAssertTrue(app.buttons["45:00"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.buttons["20:00"].waitForExistence(timeout: 2))
     }
 
     // MARK: 作成の上限
