@@ -43,7 +43,8 @@ struct TaskEditView: View {
         NavigationStack {
             Form {
                 Section("タスク名") {
-                    TextField("例：フランス語文法", text: $name)
+                    TextField("", text: $name)
+                        .accessibilityLabel("タスク名")
                 }
                 Section("カテゴリ") {
                     ForEach(categories) { category in

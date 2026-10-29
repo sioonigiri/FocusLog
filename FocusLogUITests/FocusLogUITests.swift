@@ -246,13 +246,13 @@ final class FocusLogUITests: XCTestCase {
         app.buttons["タスクを作成"].tap()
         XCTAssertTrue(app.navigationBars["タスクを追加"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.buttons["保存"].isEnabled, "名前が空なら保存できない")
-        app.textFields["例：フランス語文法"].tap()
-        app.textFields["例：フランス語文法"].typeText("過去問")
+        app.textFields["タスク名"].tap()
+        app.textFields["タスク名"].typeText("過去問")
 
         app.buttons["新しいカテゴリを作成"].tap()
         XCTAssertTrue(app.navigationBars["カテゴリを追加"].waitForExistence(timeout: 2))
-        app.textFields["例：フランス語"].tap()
-        app.textFields["例：フランス語"].typeText("物理")
+        app.textFields["カテゴリ名"].tap()
+        app.textFields["カテゴリ名"].typeText("物理")
         app.buttons["パープル"].tap()
         app.navigationBars["カテゴリを追加"].buttons["保存"].tap()
 

@@ -30,7 +30,8 @@ struct CategoryEditView: View {
         NavigationStack {
             Form {
                 Section("名前") {
-                    TextField("例：フランス語", text: $name)
+                    TextField("", text: $name)
+                        .accessibilityLabel("カテゴリ名")
                 }
                 Section("色") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 12) {
