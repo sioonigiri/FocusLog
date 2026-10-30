@@ -15,7 +15,7 @@
           "locale" : "ja"
         }
       ],
-      "productID" : "com.sioonigiri.focuslog.pro",
+      "productID" : "com.focuslog.app.pro",
       "referenceName" : "FocusLog Pro",
       "type" : "NonConsumable"
     }

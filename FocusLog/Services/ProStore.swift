@@ -7,7 +7,7 @@ import StoreKit
 @MainActor
 @Observable
 final class ProStore {
-    static let productID = "com.sioonigiri.focuslog.pro"
+    static let productID = "com.focuslog.app.pro"
 
     private(set) var isPro = false
     private(set) var product: Product?

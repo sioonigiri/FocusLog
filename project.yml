@@ -1,6 +1,6 @@
 name: FocusLog
 options:
-  bundleIdPrefix: com.sioonigiri
+  bundleIdPrefix: com.focuslog
   developmentLanguage: ja
   deploymentTarget:
     iOS: "17.0"
@@ -22,7 +22,7 @@ targets:
       - path: FocusLog
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.sioonigiri.focuslog
+        PRODUCT_BUNDLE_IDENTIFIER: com.focuslog.app
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: FocusLog
         # 標準の暗号化しか使わないので、TestFlight・審査の輸出コンプライアンスの質問を省く。
@@ -43,7 +43,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.sioonigiri.focuslog.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.focuslog.app.tests
   FocusLogUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -54,7 +54,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.sioonigiri.focuslog.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.focuslog.app.uitests
         TEST_TARGET_NAME: FocusLog
 schemes:
   FocusLog:
