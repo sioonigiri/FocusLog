@@ -230,15 +230,16 @@ final class TimerStoreTests: XCTestCase {
 @MainActor
 final class AlarmSoundTests: XCTestCase {
     func testBundledSoundsLoad() {
-        for sound in AlarmSound.allCases where sound != .standard {
+        // 標準も含めて、iOSの音（1005）ではなくアプリに入れた音で鳴らす。iOSの音はバイブが一緒に鳴るため。
+        for sound in AlarmSound.allCases {
             XCTAssertNotNil(Bundle.main.url(forResource: "\(sound.rawValue).wav", withExtension: nil), sound.name)
-            XCTAssertNotEqual(sound.systemSoundID, 1005, "\(sound.name) が読み込めず標準音になっている")
+            XCTAssertNotEqual(sound.systemSoundID, 1005, "\(sound.name) が読み込めずiOSの音になっている")
         }
-        XCTAssertEqual(AlarmSound.standard.systemSoundID, 1005)
     }
 
     func testNotificationSoundUsesFile() {
-        XCTAssertEqual(AlarmSound.standard.notificationSound, .default)
-        XCTAssertNotEqual(AlarmSound.bell.notificationSound, .default)
+        for sound in AlarmSound.allCases {
+            XCTAssertNotEqual(sound.notificationSound, .default, sound.name)
+        }
     }
 }

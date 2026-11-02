@@ -18,18 +18,17 @@ enum AlarmSound: String, CaseIterable, Identifiable {
         }
     }
 
-    /// アプリに入れている音のファイル名。標準はiOSの音を使うのでなし。
-    private var fileName: String? {
-        self == .standard ? nil : "\(rawValue).wav"
-    }
+    /// アプリに入れている音のファイル名。
+    /// 標準もiOSの音は使わない（iOSの音は、バイブをオフにしていてもバイブが一緒に鳴るため）。
+    private var fileName: String { "\(rawValue).wav" }
 
     /// アプリを開いているときに鳴らす音。
     /// システムサウンドとして鳴らすので、マナーモード中は鳴らずバイブだけになる。
     @MainActor
     var systemSoundID: SystemSoundID {
         if let cached = Self.soundIDs[self] { return cached }
-        var soundID: SystemSoundID = 1005
-        if let fileName, let url = Bundle.main.url(forResource: fileName, withExtension: nil) {
+        var soundID: SystemSoundID = 1005 // ファイルが読み込めなかったときだけ使うiOSの音
+        if let url = Bundle.main.url(forResource: fileName, withExtension: nil) {
             AudioServicesCreateSystemSoundID(url as CFURL, &soundID)
         }
         Self.soundIDs[self] = soundID
@@ -40,7 +39,7 @@ enum AlarmSound: String, CaseIterable, Identifiable {
 
     /// アプリを閉じているときの通知の音。
     var notificationSound: UNNotificationSound {
-        fileName.map { UNNotificationSound(named: UNNotificationSoundName($0)) } ?? .default
+        UNNotificationSound(named: UNNotificationSoundName(fileName))
     }
 }
 
