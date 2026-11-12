@@ -1,0 +1,11 @@
+:root { color-scheme: light dark; --fg: #1c1c1e; --sub: #6e6e73; --bg: #fff; --card: #f2f2f7; --accent: #5858e1; }
+@media (prefers-color-scheme: dark) { :root { --fg: #f2f2f7; --sub: #a1a1a6; --bg: #000; --card: #1c1c1e; --accent: #8e8eff; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.75 -apple-system, "Hiragino Sans", sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: 48px 20px 64px; }
+h1 { font-size: 1.6rem; margin: 0 0 4px; }
+h2 { font-size: 1.1rem; margin: 32px 0 8px; }
+p, li { margin: 0 0 8px; }
+.sub { color: var(--sub); font-size: .9rem; margin-bottom: 24px; }
+.card { background: var(--card); border-radius: 14px; padding: 16px 20px; }
+a { color: var(--accent); }
+footer { margin-top: 48px; color: var(--sub); font-size: .85rem; }
